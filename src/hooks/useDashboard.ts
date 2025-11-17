@@ -116,7 +116,7 @@ export const useDashboard = () => {
 
 	const userIsAdmin = (list: TodoList): boolean => {
 		if (!safeEmail) return false
-		return list.roles[safeEmail] === 'admin'
+		return list.roles[safeEmail] === Roles.ADMIN
 	}
 
 	return {

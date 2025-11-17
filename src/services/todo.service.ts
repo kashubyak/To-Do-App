@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase'
-import { TodoList } from '@/types/todo.types'
+import { TodoList, UserRole } from '@/types/todo.types'
 import { decodeEmail } from '@/utils/email.utils'
 import {
 	addDoc,
@@ -23,7 +23,7 @@ export const getTodoListsListener = (
 ): Unsubscribe => {
 	const q = query(
 		collection(db, 'todoLists'),
-		where(new FieldPath('roles', safeEmail), 'in', ['admin', 'viewer']),
+		where(new FieldPath('roles', safeEmail), 'in', [Roles.ADMIN, Roles.VIEWER]),
 	)
 
 	const unsubscribe = onSnapshot(
@@ -52,7 +52,7 @@ export const createTodoList = async (
 		name: name,
 		ownerId: userId,
 		roles: {
-			[safeEmail]: 'admin',
+			[safeEmail]: Roles.ADMIN,
 		},
 	})
 }
@@ -105,7 +105,7 @@ const findUserByEmail = async (email: string): Promise<boolean> => {
 export const addListMember = async (
 	listId: string,
 	safeEmail: string,
-	role: 'admin' | 'viewer',
+	role: UserRole,
 ): Promise<void> => {
 	const userExists = await findUserByEmail(decodeEmail(safeEmail))
 	if (!userExists) throw new Error('User with this email not found.')
