@@ -1,6 +1,10 @@
 import { auth, db } from '@/lib/firebase'
 import { UserProfile } from '@/types/auth.types'
-import { createUserWithEmailAndPassword, User } from 'firebase/auth'
+import {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	User,
+} from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 
 export const registerUser = async (
@@ -20,4 +24,9 @@ export const registerUser = async (
 	await setDoc(doc(db, 'users', user.uid), userProfile)
 
 	return user
+}
+
+export const loginUser = async (email: string, password: string): Promise<User> => {
+	const userCredential = await signInWithEmailAndPassword(auth, email, password)
+	return userCredential.user
 }
