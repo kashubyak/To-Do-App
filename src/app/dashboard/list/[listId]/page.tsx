@@ -9,6 +9,7 @@ import {
 	Breadcrumbs,
 	Button,
 	Checkbox,
+	Chip,
 	CircularProgress,
 	Container,
 	FormControl,
@@ -32,6 +33,8 @@ import {
 	query,
 	updateDoc,
 	where,
+	writeBatch,
+	deleteField, // <-- ОСЬ ВИПРАВЛЕННЯ
 } from 'firebase/firestore'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -53,6 +56,9 @@ interface TodoList {
 }
 
 type UserRole = 'admin' | 'viewer' | null
+
+const encodeEmail = (email: string) => email.replace(/\./g, '_DOT_')
+const decodeEmail = (safeEmail: string) => safeEmail.replace(/_DOT_/g, '.')
 
 export default function ListPage() {
 	const { user } = useAuth()
@@ -96,7 +102,10 @@ export default function ListPage() {
 				if (docSnap.exists()) {
 					const listData = { id: docSnap.id, ...docSnap.data() } as TodoList
 					setListDetails(listData)
-					const role = listData.roles[user.email!]
+
+					const safeEmail = encodeEmail(user.email!)
+					const role = listData.roles[safeEmail]
+
 					if (role === 'admin' || role === 'viewer') {
 						setUserRole(role)
 					} else {
@@ -177,7 +186,7 @@ export default function ListPage() {
 	}
 
 	const onAddMember: SubmitHandler<FieldValues> = async data => {
-		if (userRole !== 'admin' || !listDetails) return
+		if (userRole !== 'admin' || !listDetails || !user) return
 		setMemberError(null)
 
 		const emailToAdd = data.memberEmail
@@ -188,7 +197,9 @@ export default function ListPage() {
 			return
 		}
 
-		if (listDetails.roles[emailToAdd]) {
+		const safeEmailToAdd = encodeEmail(emailToAdd)
+
+		if (listDetails.roles[safeEmailToAdd]) {
 			setMemberError('Цей користувач вже є учасником.')
 			return
 		}
@@ -205,12 +216,38 @@ export default function ListPage() {
 
 			const listRef = doc(db, 'todoLists', listId)
 			await updateDoc(listRef, {
-				[`roles.${emailToAdd}`]: roleToAdd,
+				[`roles.${safeEmailToAdd}`]: roleToAdd,
 			})
 			resetMember()
 		} catch (error) {
 			console.error('Помилка додавання учасника:', error)
 			setMemberError('Сталася помилка. Спробуйте пізніше.')
+		}
+	}
+
+	const handleRemoveMember = async (safeEmailToRemove: string) => {
+		if (userRole !== 'admin' || !listDetails || !user) return
+
+		const safeCurrentUserEmail = encodeEmail(user.email!)
+		if (safeEmailToRemove === safeCurrentUserEmail) {
+			setMemberError('Ви не можете видалити себе.')
+			return
+		}
+
+		if (
+			window.confirm(`Ви впевнені, що хочете видалити ${decodeEmail(safeEmailToRemove)}?`)
+		) {
+			try {
+				const listRef = doc(db, 'todoLists', listId)
+
+				const batch = writeBatch(db)
+				batch.update(listRef, {
+					[`roles.${safeEmailToRemove}`]: deleteField(),
+				})
+				await batch.commit()
+			} catch (error) {
+				console.error('Помилка видалення учасника:', error)
+			}
 		}
 	}
 
@@ -322,6 +359,24 @@ export default function ListPage() {
 							>
 								{isSubmittingMember ? '...' : 'Додати'}
 							</Button>
+						</Box>
+
+						<Box sx={{ mt: 3 }}>
+							<Typography variant='subtitle1'>Поточні учасники:</Typography>
+							<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+								{Object.entries(listDetails.roles).map(([safeEmail, role]) => (
+									<Chip
+										key={safeEmail}
+										label={`${decodeEmail(safeEmail)} (${role})`}
+										color={role === 'admin' ? 'primary' : 'default'}
+										onDelete={
+											safeEmail !== encodeEmail(user?.email || '')
+												? () => handleRemoveMember(safeEmail)
+												: undefined
+										}
+									/>
+								))}
+							</Box>
 						</Box>
 					</Box>
 				)}
