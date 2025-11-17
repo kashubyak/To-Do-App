@@ -43,14 +43,16 @@ export default function RegisterPage() {
 
 			router.push('/login')
 		} catch (error: unknown) {
-			console.error('Помилка реєстрації:', error)
+			console.error('Registration Error:', error)
 
 			if (error instanceof FirebaseError) {
-				if (error.code === 'auth/email-already-in-use')
-					setFirebaseError('Цей email вже зареєстровано.')
-				else setFirebaseError('Не вдалося створити акаунт. Спробуйте пізніше.')
+				if (error.code === 'auth/email-already-in-use') {
+					setFirebaseError('This email is already registered.')
+				} else {
+					setFirebaseError('Failed to create an account. Please try again later.')
+				}
 			} else {
-				setFirebaseError('Сталася невідома помилка.')
+				setFirebaseError('An unknown error occurred.')
 			}
 		}
 	}
@@ -67,7 +69,7 @@ export default function RegisterPage() {
 				className='p-4'
 			>
 				<Typography component='h1' variant='h5'>
-					Реєстрація
+					Sign Up
 				</Typography>
 				<Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 3 }}>
 					{firebaseError && (
@@ -81,11 +83,11 @@ export default function RegisterPage() {
 						required
 						fullWidth
 						id='name'
-						label="Ваше ім'я"
+						label='Your Name'
 						autoComplete='name'
 						autoFocus
 						{...register('name', {
-							required: "Ім'я обов'язкове",
+							required: 'Name is required',
 						})}
 						error={!!errors.name}
 						helperText={errors.name?.message as string}
@@ -96,13 +98,13 @@ export default function RegisterPage() {
 						required
 						fullWidth
 						id='email'
-						label='Email Адреса'
+						label='Email Address'
 						autoComplete='email'
 						{...register('email', {
-							required: "Email обов'язковий",
+							required: 'Email is required',
 							pattern: {
 								value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-								message: 'Некоректний email',
+								message: 'Invalid email address',
 							},
 						})}
 						error={!!errors.email}
@@ -113,15 +115,15 @@ export default function RegisterPage() {
 						margin='normal'
 						required
 						fullWidth
-						label='Пароль'
+						label='Password'
 						type='password'
 						id='password'
 						autoComplete='new-password'
 						{...register('password', {
-							required: "Пароль обов'язковий",
+							required: 'Password is required',
 							minLength: {
 								value: 6,
-								message: 'Пароль має бути мінімум 6 символів',
+								message: 'Password must be at least 6 characters',
 							},
 						})}
 						error={!!errors.password}
@@ -132,12 +134,12 @@ export default function RegisterPage() {
 						margin='normal'
 						required
 						fullWidth
-						label='Повторіть Пароль'
+						label='Confirm Password'
 						type='password'
 						id='confirmPassword'
 						{...register('confirmPassword', {
-							required: "Підтвердження паролю обов'язкове",
-							validate: value => value === password || 'Паролі не співпадають',
+							required: 'Password confirmation is required',
+							validate: value => value === password || 'Passwords do not match',
 						})}
 						error={!!errors.confirmPassword}
 						helperText={errors.confirmPassword?.message as string}
@@ -150,7 +152,7 @@ export default function RegisterPage() {
 						sx={{ mt: 3, mb: 2 }}
 						disabled={isSubmitting}
 					>
-						{isSubmitting ? 'Реєстрація...' : 'Зареєструватися'}
+						{isSubmitting ? 'Signing Up...' : 'Sign Up'}
 					</Button>
 					<div className='text-center'>
 						<Link href='/login' passHref>
@@ -159,7 +161,7 @@ export default function RegisterPage() {
 								component='a'
 								className='text-blue-500 hover:underline'
 							>
-								{'Вже маєте акаунт? Увійти'}
+								{'Already have an account? Sign In'}
 							</Typography>
 						</Link>
 					</div>
