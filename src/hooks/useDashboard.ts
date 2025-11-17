@@ -7,11 +7,10 @@ import {
 	updateTodoListName,
 } from '@/services/todo.service'
 import { CreateListFormData, EditListFormData, TodoList } from '@/types/todo.types'
+import { encodeEmail } from '@/utils/email.utils'
 import { useRouter } from 'next/navigation'
 import { MouseEvent, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-
-const encodeEmail = (email: string) => email.replace(/\./g, '_DOT_')
 
 export const useDashboard = () => {
 	const { user } = useAuth()

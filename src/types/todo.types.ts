@@ -14,3 +14,27 @@ export interface CreateListFormData extends FieldValues {
 export interface EditListFormData extends FieldValues {
 	editListName: string
 }
+
+export interface Task {
+	id: string
+	title: string
+	description: string
+	completed: boolean
+}
+
+export type UserRole = 'admin' | 'viewer' | null
+
+export interface CreateTaskFormData extends FieldValues {
+	taskTitle: string
+	taskDescription: string
+}
+
+export interface EditTaskFormData extends FieldValues {
+	editTaskTitle: string
+	editTaskDescription: string
+}
+
+export interface AddMemberFormData extends FieldValues {
+	memberEmail: string
+	memberRole: 'admin' | 'viewer'
+}
