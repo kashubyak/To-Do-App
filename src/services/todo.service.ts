@@ -23,7 +23,7 @@ export const getTodoListsListener = (
 ): Unsubscribe => {
 	const q = query(
 		collection(db, 'todoLists'),
-		where(new FieldPath('roles', safeEmail), 'in', [Roles.ADMIN, Roles.VIEWER]),
+		where(new FieldPath('roles', safeEmail), 'in', ['admin', 'viewer']),
 	)
 
 	const unsubscribe = onSnapshot(
@@ -52,7 +52,7 @@ export const createTodoList = async (
 		name: name,
 		ownerId: userId,
 		roles: {
-			[safeEmail]: Roles.ADMIN,
+			[safeEmail]: 'admin',
 		},
 	})
 }

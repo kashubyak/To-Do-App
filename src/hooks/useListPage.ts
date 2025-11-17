@@ -50,7 +50,7 @@ export const useListPage = () => {
 			if (listData) {
 				setListDetails(listData)
 				const role = listData.roles[safeEmail]
-				if (role === Roles.ADMIN || role === Roles.VIEWER) {
+				if (role === 'admin' || role === 'viewer') {
 					setUserRole(role)
 					setIsLoading(false)
 				} else {
@@ -74,12 +74,12 @@ export const useListPage = () => {
 
 	const formCreateTask = useForm<CreateTaskFormData>()
 	const formAddMember = useForm<AddMemberFormData>({
-		defaultValues: { memberEmail: '', memberRole: Roles.VIEWER },
+		defaultValues: { memberEmail: '', memberRole: 'viewer' },
 	})
 	const formEditTask = useForm<EditTaskFormData>()
 
 	const onSubmitTaskCreate: SubmitHandler<CreateTaskFormData> = async data => {
-		if (userRole !== Roles.ADMIN) return
+		if (userRole !== 'admin') return
 		try {
 			await createTask(listId, data)
 			formCreateTask.reset()
@@ -100,7 +100,7 @@ export const useListPage = () => {
 		formEditTask.reset()
 	}
 	const onSubmitTaskEdit: SubmitHandler<EditTaskFormData> = async data => {
-		if (!currentTask || userRole !== Roles.ADMIN) return
+		if (!currentTask || userRole !== 'admin') return
 		try {
 			await updateTask(listId, currentTask.id, data)
 			handleCloseEditTask()
@@ -119,7 +119,7 @@ export const useListPage = () => {
 	}
 
 	const handleDeleteTask = async (taskId: string) => {
-		if (userRole !== Roles.ADMIN) return
+		if (userRole !== 'admin') return
 		if (window.confirm('Are you sure you want to delete this task?')) {
 			try {
 				await deleteTask(listId, taskId)
@@ -130,7 +130,7 @@ export const useListPage = () => {
 	}
 
 	const onAddMember: SubmitHandler<AddMemberFormData> = async data => {
-		if (userRole !== Roles.ADMIN || !listDetails || !user) return
+		if (userRole !== 'admin' || !listDetails || !user) return
 		setMemberError(null)
 
 		const emailToAdd = data.memberEmail
@@ -159,7 +159,7 @@ export const useListPage = () => {
 	}
 
 	const handleRemoveMember = async (safeEmailToRemove: string) => {
-		if (userRole !== Roles.ADMIN || !safeEmail || safeEmailToRemove === safeEmail) {
+		if (userRole !== 'admin' || !safeEmail || safeEmailToRemove === safeEmail) {
 			setMemberError('You cannot remove yourself.')
 			return
 		}

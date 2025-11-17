@@ -58,7 +58,7 @@ export default function ListPage() {
 			>
 				<ListPageHeader listName={listDetails.name} />
 
-				{userRole === Roles.ADMIN && (
+				{userRole === 'admin' && (
 					<MemberManager
 						listDetails={listDetails}
 						currentUserEmail={safeEmail || ''}
@@ -75,7 +75,7 @@ export default function ListPage() {
 					/>
 				)}
 
-				{userRole === Roles.ADMIN && (
+				{userRole === 'admin' && (
 					<CreateTaskForm
 						form={{
 							isSubmitting: formCreateTask.formState.isSubmitting,

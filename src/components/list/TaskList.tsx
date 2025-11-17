@@ -44,7 +44,7 @@ export const TaskList: React.FC<TaskListProps> = ({
 						bgcolor: task.completed ? '#f0f0f0' : 'background.paper',
 					}}
 					secondaryAction={
-						userRole === Roles.ADMIN ? (
+						userRole === 'admin' ? (
 							<>
 								<IconButton
 									edge='end'

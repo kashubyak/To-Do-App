@@ -91,8 +91,8 @@ export const MemberManager: React.FC<MemberManagerProps> = ({
 					control={form.control}
 					render={({ field }) => (
 						<Select labelId='role-select-label' id='memberRole' label='Role' {...field}>
-							<MenuItem value={Roles.VIEWER}>Viewer</MenuItem>
-							<MenuItem value={Roles.ADMIN}>Admin</MenuItem>
+							<MenuItem value={'viewer'}>Viewer</MenuItem>
+							<MenuItem value={'admin'}>Admin</MenuItem>
 						</Select>
 					)}
 				/>
@@ -113,7 +113,7 @@ export const MemberManager: React.FC<MemberManagerProps> = ({
 					<Chip
 						key={safeEmail}
 						label={`${decodeEmail(safeEmail)} (${role})`}
-						color={role === Roles.ADMIN ? 'primary' : 'default'}
+						color={role === 'admin' ? 'primary' : 'default'}
 						onDelete={
 							safeEmail !== encodeEmail(currentUserEmail)
 								? () => onRemove(safeEmail)
