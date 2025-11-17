@@ -27,7 +27,7 @@ export const useDashboard = () => {
 	useEffect(() => {
 		if (safeEmail) {
 			setIsLoadingLists(true)
-			const unsubscribe = getTodoListsListener(safeEmail, lists => {
+			const unsubscribe = getTodoListsListener(safeEmail, (lists: TodoList[]) => {
 				setTodoLists(lists)
 				setIsLoadingLists(false)
 			})
