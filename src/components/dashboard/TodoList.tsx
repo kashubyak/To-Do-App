@@ -65,37 +65,37 @@ export const TodoLists: React.FC<TodoListProps> = ({
 			{!isLoading && lists.length > 0 && (
 				<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
 					{lists.map(list => (
-						<Link href={`${ROUTES.DASHBOARD}/list/${list.id}`} passHref key={list.id}>
-							<ListItem
-								component='a'
-								sx={{
-									border: '1px solid #ddd',
-									borderRadius: '4px',
-									mb: 1,
-									cursor: 'pointer',
-									'&:hover': { bgcolor: '#f5f5f5' },
-								}}
-							>
-								<ListItemText primary={list.name} />
-								{userIsAdmin(list) && (
-									<Box sx={{ ml: 2 }}>
-										<IconButton
-											color='primary'
-											onClick={e => {
-												e.stopPropagation()
-												e.preventDefault()
-												onOpenEdit(list)
-											}}
-										>
-											<EditIcon />
-										</IconButton>
-										<IconButton color='error' onClick={e => onDelete(e, list.id)}>
-											<DeleteIcon />
-										</IconButton>
-									</Box>
-								)}
-							</ListItem>
-						</Link>
+						<ListItem
+							key={list.id}
+							component={Link}
+							href={`${ROUTES.DASHBOARD}/list/${list.id}`}
+							sx={{
+								border: '1px solid #ddd',
+								borderRadius: '4px',
+								mb: 1,
+								cursor: 'pointer',
+								'&:hover': { bgcolor: '#f5f5f5' },
+							}}
+						>
+							<ListItemText primary={list.name} />
+							{userIsAdmin(list) && (
+								<Box sx={{ ml: 2 }}>
+									<IconButton
+										color='primary'
+										onClick={e => {
+											e.stopPropagation()
+											e.preventDefault()
+											onOpenEdit(list)
+										}}
+									>
+										<EditIcon />
+									</IconButton>
+									<IconButton color='error' onClick={e => onDelete(e, list.id)}>
+										<DeleteIcon />
+									</IconButton>
+								</Box>
+							)}
+						</ListItem>
 					))}
 				</List>
 			)}
