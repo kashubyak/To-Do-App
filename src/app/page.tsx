@@ -1,5 +1,6 @@
 'use client'
 
+import { ROUTES } from '@/constants/route'
 import { useAuth } from '@/contexts/AuthContext'
 import { Box, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/navigation'
@@ -11,8 +12,8 @@ export default function Home() {
 
 	useEffect(() => {
 		if (!loading) {
-			if (user) router.replace('/dashboard')
-			else router.replace('/login')
+			if (user) router.replace(ROUTES.DASHBOARD)
+			else router.replace(ROUTES.LOGIN)
 		}
 	}, [user, loading, router])
 

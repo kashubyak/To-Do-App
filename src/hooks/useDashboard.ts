@@ -1,3 +1,4 @@
+import { ROUTES } from '@/constants/route'
 import { useAuth } from '@/contexts/AuthContext'
 import { logoutUser } from '@/services/auth.service'
 import {
@@ -41,7 +42,7 @@ export const useDashboard = () => {
 	const handleLogout = async () => {
 		try {
 			await logoutUser()
-			router.push('/login')
+			router.push(ROUTES.LOGIN)
 		} catch (error) {
 			console.error('Logout Error:', error)
 		}

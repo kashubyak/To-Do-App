@@ -1,5 +1,6 @@
 'use client'
 
+import { ROUTES } from '@/constants/route'
 import { RegisterFormData } from '@/types/auth.types'
 import { Alert, Box, Button, TextField, Typography } from '@mui/material'
 import Link from 'next/link'
@@ -123,7 +124,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 					{isSubmitting ? 'Signing Up...' : 'Sign Up'}
 				</Button>
 				<div className='text-center'>
-					<Link href='/login' passHref>
+					<Link href={ROUTES.LOGIN} passHref>
 						<Typography
 							variant='body2'
 							component='a'

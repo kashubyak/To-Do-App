@@ -1,3 +1,4 @@
+import { ROUTES } from '@/constants/route'
 import { loginUser } from '@/services/auth.service'
 import { LoginFormData } from '@/types/login-form-data'
 import { FirebaseError } from 'firebase/app'
@@ -20,7 +21,7 @@ export const useLogin = () => {
 
 		try {
 			await loginUser(data.email, data.password)
-			router.push('/dashboard')
+			router.push(ROUTES.DASHBOARD)
 		} catch (error: unknown) {
 			console.error('Login Error:', error)
 			if (error instanceof FirebaseError) {

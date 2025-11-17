@@ -1,3 +1,4 @@
+import { ROUTES } from '@/constants/route'
 import { useAuth } from '@/contexts/AuthContext'
 import {
 	createTask,
@@ -54,10 +55,10 @@ export const useListPage = () => {
 					setIsLoading(false)
 				} else {
 					setUserRole(null)
-					router.replace('/dashboard')
+					router.replace(ROUTES.DASHBOARD)
 				}
 			} else {
-				router.replace('/dashboard')
+				router.replace(ROUTES.DASHBOARD)
 			}
 		})
 		return () => unsubscribe()

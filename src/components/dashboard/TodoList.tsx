@@ -1,5 +1,6 @@
 'use client'
 
+import { ROUTES } from '@/constants/route'
 import { TodoList } from '@/types/todo.types'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -64,7 +65,7 @@ export const TodoLists: React.FC<TodoListProps> = ({
 			{!isLoading && lists.length > 0 && (
 				<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
 					{lists.map(list => (
-						<Link href={`/dashboard/list/${list.id}`} passHref key={list.id}>
+						<Link href={`${ROUTES.DASHBOARD}/list/${list.id}`} passHref key={list.id}>
 							<ListItem
 								component='a'
 								sx={{

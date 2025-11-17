@@ -1,3 +1,4 @@
+import { ROUTES } from '@/constants/route'
 import { registerUser } from '@/services/auth.service'
 import { RegisterFormData } from '@/types/auth.types'
 import { FirebaseError } from 'firebase/app'
@@ -23,7 +24,7 @@ export const useRegister = () => {
 
 		try {
 			await registerUser(data.name, data.email, data.password)
-			router.push('/login')
+			router.push(ROUTES.LOGIN)
 		} catch (error: unknown) {
 			console.error('Registration Error:', error)
 			if (error instanceof FirebaseError) {

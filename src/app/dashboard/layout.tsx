@@ -1,5 +1,6 @@
 'use client'
 
+import { ROUTES } from '@/constants/route'
 import { useAuth } from '@/contexts/AuthContext'
 import { Box, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/navigation'
@@ -10,7 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	const router = useRouter()
 
 	useEffect(() => {
-		if (!loading && !user) router.replace('/login')
+		if (!loading && !user) router.replace(ROUTES.LOGIN)
 	}, [user, loading, router])
 
 	if (loading) {
