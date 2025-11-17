@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/AuthContext' // Наш хук
 import { Box, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
@@ -10,9 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	const router = useRouter()
 
 	useEffect(() => {
-		if (!loading && !user) {
-			router.replace('/login')
-		}
+		if (!loading && !user) router.replace('/login')
 	}, [user, loading, router])
 
 	if (loading) {
@@ -29,10 +27,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			</Box>
 		)
 	}
-
-	if (!user) {
-		return null
-	}
-
-	return <>{children}</>
+	if (user) return <>{children}</>
+	return null
 }
