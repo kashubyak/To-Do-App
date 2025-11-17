@@ -1,4 +1,4 @@
-import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app'
+import { FirebaseApp, FirebaseError, getApp, getApps, initializeApp } from 'firebase/app'
 import { Auth, getAuth } from 'firebase/auth'
 import { Firestore, getFirestore } from 'firebase/firestore'
 
@@ -10,12 +10,10 @@ const firebaseConfig = {
 	messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 	appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
-let app: FirebaseApp
 
-if (getApps().length === 0) app = initializeApp(firebaseConfig)
-else app = getApp()
+const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp()
 
 const auth: Auth = getAuth(app)
 const db: Firestore = getFirestore(app)
 
-export { app, auth, db }
+export { app, auth, db, FirebaseError }
