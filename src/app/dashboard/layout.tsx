@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/contexts/AuthContext' // Наш хук
+import { useAuth } from '@/contexts/AuthContext'
 import { Box, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'

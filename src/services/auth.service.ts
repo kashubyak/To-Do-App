@@ -3,6 +3,7 @@ import { UserProfile } from '@/types/auth.types'
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	signOut,
 	User,
 } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
@@ -20,13 +21,15 @@ export const registerUser = async (
 		name: name,
 		email: email,
 	}
-
 	await setDoc(doc(db, 'users', user.uid), userProfile)
-
 	return user
 }
 
 export const loginUser = async (email: string, password: string): Promise<User> => {
 	const userCredential = await signInWithEmailAndPassword(auth, email, password)
 	return userCredential.user
+}
+
+export const logoutUser = async (): Promise<void> => {
+	await signOut(auth)
 }
