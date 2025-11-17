@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+To-Do App (Next.js & Firebase)
 
-## Getting Started
+This is a web application for task management developed as a test assignment. It allows users to create and organize task lists, manage individual tasks, and collaborate with other users by assigning roles.
 
-First, run the development server:
+The application is built with a clean, decoupled architecture, separating business logic (services), presentation logic (hooks), and UI (components).
 
-```bash
+✨ Key Features
+
+User Authentication:
+
+User registration (Name, Email, Password).
+
+User sign-in.
+
+Persistent login state managed by Firebase Authentication.
+
+List Management (CRUD):
+
+Create new to-do lists.
+
+Edit existing list names.
+
+Delete lists (only by Admins).
+
+Task Management (CRUD):
+
+Create new tasks with a title and description within a list.
+
+Edit existing tasks (title and description).
+
+Delete tasks.
+
+Toggle tasks as complete/incomplete.
+
+Collaborative Roles & Permissions:
+
+Add Members: Add other registered users to a list by their email address.
+
+Admin Role: Full CRUD control over the list and its tasks. Can add/remove other members.
+
+Viewer Role: Can view all tasks and only toggle their completion status.
+
+🚀 Tech Stack
+
+Framework: Next.js 14 (App Router)
+
+Language: TypeScript
+
+UI: MUI (Material-UI) & Emotion
+
+Backend & DB: Firebase (Authentication & Firestore)
+
+Form Management: react-hook-form
+
+Styling: Tailwind CSS (for base layout and theming)
+
+🏁 Getting Started
+
+Follow these instructions to get the project running on your local machine.
+
+1. Prerequisites
+
+Node.js (v18.0 or later recommended)
+
+npm or yarn
+
+2. Clone the Repository
+
+git clone https://github.com/kashubyak/To-Do-App.git
+cd To-Do-App
+
+3. Install Dependencies
+
+npm install
+
+4. Set up Firebase
+
+This project requires a Firebase project to handle authentication and the database.
+
+Go to the Firebase Console.
+
+Click "Add project" and follow the steps.
+
+Once your project is created, click the Web icon (</>) to "Add an app to get started".
+
+Register your app. Firebase will provide you with a firebaseConfig object. Copy this object.
+
+In the Firebase Console, go to the Authentication tab (left sidebar).
+
+Click "Get started".
+
+Select "Email/Password" and Enable it.
+
+Go to the Firestore Database tab.
+
+Click "Create database".
+
+Start in Test Mode. (This allows the app to read/write without complex security rules).
+
+Choose a region.
+
+5. Set Environment Variables
+
+In the root of your project, create a new file named .env.local.
+
+Paste your firebaseConfig keys into this file, adding the NEXT*PUBLIC* prefix to each key. See .env.example for the required fields.
+
+.env.local:
+
+NEXT_PUBLIC_FIREBASE_API_KEY=AIza...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+NEXT_PUBLIC_FIREBASE_APP_ID=...
+
+Important: The "Add Member" feature works by looking up users by their email in the users collection. This collection is automatically populated when a new user registers (see src/services/auth.service.ts).
+
+6. Run the Application
+
+Run the development server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+📂 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application follows a clean architecture to separate concerns:
 
-## Learn More
+src/app/: Contains page "containers" (e.g., login/page.tsx). These are minimal files that connect hooks to UI components.
 
-To learn more about Next.js, take a look at the following resources:
+src/components/: "Dumb" UI components that receive props and display UI (e.g., RegisterForm.tsx, TaskList.tsx).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+src/hooks/: Custom hooks that contain all presentation logic and state management for a page (e.g., useLogin.ts, useListPage.ts).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+src/services/: All business logic and direct API calls to Firebase (e.g., auth.service.ts, todo.service.ts).
 
-## Deploy on Vercel
+src/types/: Contains all TypeScript interfaces and types for the application.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+src/lib/: Firebase SDK initialization (firebase.ts).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+src/utils/: Helper functions (e.g., email.utils.ts for encoding Firestore keys).
