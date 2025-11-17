@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { db } from '@/lib/firebase'
 import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit' // <-- ДОДАНО
 import {
 	Alert,
 	Box,
@@ -19,6 +20,7 @@ import {
 	ListItem,
 	ListItemText,
 	MenuItem,
+	Modal, // <-- ДОДАНО
 	Select,
 	TextField,
 	Typography,
@@ -27,6 +29,7 @@ import {
 	addDoc,
 	collection,
 	deleteDoc,
+	deleteField,
 	doc,
 	getDocs,
 	onSnapshot,
@@ -34,7 +37,6 @@ import {
 	updateDoc,
 	where,
 	writeBatch,
-	deleteField, // <-- ОСЬ ВИПРАВЛЕННЯ
 } from 'firebase/firestore'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -60,6 +62,19 @@ type UserRole = 'admin' | 'viewer' | null
 const encodeEmail = (email: string) => email.replace(/\./g, '_DOT_')
 const decodeEmail = (safeEmail: string) => safeEmail.replace(/_DOT_/g, '.')
 
+// Стиль для модального вікна
+const modalStyle = {
+	position: 'absolute' as 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: 400,
+	bgcolor: 'background.paper',
+	border: '2px solid #000',
+	boxShadow: 24,
+	p: 4,
+}
+
 export default function ListPage() {
 	const { user } = useAuth()
 	const router = useRouter()
@@ -71,6 +86,10 @@ export default function ListPage() {
 	const [userRole, setUserRole] = useState<UserRole>(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [memberError, setMemberError] = useState<string | null>(null)
+
+	// --- Стан для модального вікна Редагування Завдання ---
+	const [openEditTask, setOpenEditTask] = useState(false)
+	const [currentTask, setCurrentTask] = useState<Task | null>(null)
 
 	const {
 		register: registerCreate,
@@ -92,6 +111,15 @@ export default function ListPage() {
 		},
 	})
 
+	// --- Форма для Редагування Завдання ---
+	const {
+		register: registerEditTask,
+		handleSubmit: handleSubmitEditTask,
+		reset: resetEditTask,
+		setValue: setEditTaskValue, // <-- Для заповнення форми
+		formState: { errors: errorsEditTask, isSubmitting: isSubmittingEditTask },
+	} = useForm()
+
 	useEffect(() => {
 		if (!user || !user.email || !listId) return
 
@@ -102,7 +130,6 @@ export default function ListPage() {
 				if (docSnap.exists()) {
 					const listData = { id: docSnap.id, ...docSnap.data() } as TodoList
 					setListDetails(listData)
-
 					const safeEmail = encodeEmail(user.email!)
 					const role = listData.roles[safeEmail]
 
@@ -158,6 +185,35 @@ export default function ListPage() {
 			resetCreate()
 		} catch (error) {
 			console.error('Помилка створення завдання:', error)
+		}
+	}
+
+	// --- Логіка Редагування Завдання ---
+	const handleOpenEditTask = (task: Task) => {
+		setCurrentTask(task)
+		setEditTaskValue('editTaskTitle', task.title)
+		setEditTaskValue('editTaskDescription', task.description)
+		setOpenEditTask(true)
+	}
+
+	const handleCloseEditTask = () => {
+		setOpenEditTask(false)
+		setCurrentTask(null)
+		resetEditTask()
+	}
+
+	const onSubmitTaskEdit: SubmitHandler<FieldValues> = async data => {
+		if (!currentTask || userRole !== 'admin') return
+
+		try {
+			const taskRef = doc(db, 'todoLists', listId, 'tasks', currentTask.id)
+			await updateDoc(taskRef, {
+				title: data.editTaskTitle,
+				description: data.editTaskDescription || '',
+			})
+			handleCloseEditTask()
+		} catch (error) {
+			console.error('Помилка оновлення завдання:', error)
 		}
 	}
 
@@ -450,6 +506,15 @@ export default function ListPage() {
 								secondaryAction={
 									userRole === 'admin' ? (
 										<>
+											{/* --- Кнопка Редагування --- */}
+											<IconButton
+												edge='end'
+												aria-label='edit'
+												onClick={() => handleOpenEditTask(task)}
+												sx={{ mr: 1 }}
+											>
+												<EditIcon />
+											</IconButton>
 											<IconButton
 												edge='end'
 												aria-label='delete'
@@ -480,6 +545,51 @@ export default function ListPage() {
 					</List>
 				</Box>
 			</Box>
+
+			{/* --- Модальне вікно Редагування Завдання --- */}
+			<Modal open={openEditTask} onClose={handleCloseEditTask}>
+				<Box
+					component='form'
+					onSubmit={handleSubmitEditTask(onSubmitTaskEdit)}
+					noValidate
+					sx={modalStyle}
+				>
+					<Typography variant='h6' component='h2'>
+						Редагувати завдання
+					</Typography>
+					<TextField
+						margin='normal'
+						required
+						fullWidth
+						id='editTaskTitle'
+						label='Назва завдання'
+						autoFocus
+						{...registerEditTask('editTaskTitle', {
+							required: 'Назва завдання обовʼязкова',
+						})}
+						error={!!errorsEditTask.editTaskTitle}
+						helperText={errorsEditTask.editTaskTitle?.message as string}
+						disabled={isSubmittingEditTask}
+					/>
+					<TextField
+						margin='normal'
+						fullWidth
+						id='editTaskDescription'
+						label='Опис (необовʼязково)'
+						{...registerEditTask('editTaskDescription')}
+						disabled={isSubmittingEditTask}
+					/>
+					<Button
+						type='submit'
+						fullWidth
+						variant='contained'
+						sx={{ mt: 3, mb: 2 }}
+						disabled={isSubmittingEditTask}
+					>
+						{isSubmittingEditTask ? 'Збереження...' : 'Зберегти'}
+					</Button>
+				</Box>
+			</Modal>
 		</Container>
 	)
 }
